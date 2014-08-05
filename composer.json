@@ -1,0 +1,22 @@
+{
+    "name": "kslimani/silex-provider-memcached",
+    "type": "library",
+    "description": "Memcached simple service provider for Silex.",
+    "keywords": ["silex", "memcached"],
+    "homepage": "https://github.com/kslimani/silex-provider-memcached",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kslimani"
+        }
+    ],
+    "require-dev": {
+        "silex/silex": "~1.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Kslimani\\Silex\\Provider": "src"
+        }
+    },
+    "minimum-stability": "dev"
+}
