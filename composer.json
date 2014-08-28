@@ -1,7 +1,7 @@
 {
     "name": "kslimani/silex-provider-memcached",
     "type": "library",
-    "description": "Memcached simple service provider for Silex.",
+    "description": "Memcached Silex service provider.",
     "keywords": ["silex", "memcached"],
     "homepage": "https://github.com/kslimani/silex-provider-memcached",
     "license": "MIT",
@@ -10,13 +10,16 @@
             "name": "kslimani"
         }
     ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=5.5.0"
+    },
     "require-dev": {
-        "silex/silex": "~1.0"
+        "phpunit/phpunit": "4.2.*",
+        "silex/silex": "~1.2",
+        "fabpot/php-cs-fixer": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "Kslimani\\Silex\\Provider": "src"
-        }
-    },
-    "minimum-stability": "dev"
+        "psr-4": { "": "src/" }
+    }
 }

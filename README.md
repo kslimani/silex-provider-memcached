@@ -46,99 +46,145 @@ The Memcached provider provide a `memcached` service (and also a `mc` shortcut) 
 ```php
 
 $app->get('/foo', function () use ($app) {
-    $value = $app['mc']->get('foo');
+    $value = $app['memcached']->get('foo');
 
     return new Response(sprintf("foo value is %s", $value));
 });
 
 ```
 
+## Configuration
 
-## Parameters
+* `memcached.config` : a key/value indexed array of Memcached connections pool.
 
-* `mc.options` : Array of Memcached options.
+Default service provider configuration is :
 
-Available options are :
+```php
 
-* `servers` : Array of the servers to add to the pool. (see [Memcached::addServers](http://php.net/manual/en/memcached.addservers.php))
+array('memcached.config' => array(
+    'default' => array(
+        'servers' => array(array(127.0.0.1, 11211))
+    )
+))
+
+```
+
+Available configuration parameters are :
+
 * `persistant_id` : Optionnal. Specify a unique ID for the instance. (see [Memcached::__construct](http://php.net/manual/en/memcached.construct.php))
+* `servers` : Array of the servers to add to the pool. (see [Memcached::addServers](http://php.net/manual/en/memcached.addservers.php))
 * `options` : Optionnal. An associative array of options. (see [Memcached::setOptions](http://php.net/manual/en/memcached.setoptions.php))
 
 ```php
 
 // Example with a pool of 3 servers
-$app->register(new MemcachedServiceProvider(), array(
-    'mc.options' => array(
+$app->register(new MemcachedServiceProvider(), array('memcached.config' => array(
+    'default' => array(
         'servers' => array(
             array('192.168.1.101', 11211),
             array('192.168.1.102', 11211),
             array('192.168.1.103', 11211)
         )
     )
-));
+)));
 
 // Example with persistent connections and weight
-$app->register(new MemcachedServiceProvider(), array(
-    'mc.options' => array(
+$app->register(new MemcachedServiceProvider(), array('memcached.config' => array(
+    'default' => array(
         'persistent_id' => 'unique_pool_id',
         'servers' => array(
             array('192.168.1.101', 11211, 33),
             array('192.168.1.102', 11211, 67)
         )
     )
-));
+)));
 
 // Example with setting options
-$app->register(new MemcachedServiceProvider(), array(
-    'mc.options' => array(
+$app->register(new MemcachedServiceProvider(), array('memcached.config' => array(
+    'default' => array(
         'servers' => array(
             array('192.168.1.101', 11211)
         ),
         'options' => array(
             \Memcached::OPT_SERIALIZER => \Memcached::SERIALIZER_IGBINARY,
             \Memcached::OPT_BINARY_PROTOCOL => true
-        ),
+        )
     )
-));
+)));
 
 ```
 
 
 ## Using multiple pools
 
-The Memcached provider can allow access to multiple pool instances.
-In order to configure the pools, replace the `mc.options` with `mcs.options`.
-`mcs.options` is an array of configuration where key are pool names and values are options :
+The Memcached provider can allow access to multiple pool instances :
 
 ```php
 
-$app->register(new MemcachedServiceProvider(), array(
-    'mcs.options' => array(
-        'first_pool' => array(
-            'persistent_id' => 'unique_pool_id',
-            'servers' => array(
-                array('192.168.1.101', 11211),
-                array('192.168.1.102', 11211)
-            ),
-            'options' => array(
-                \Memcached::OPT_SERIALIZER => \Memcached::SERIALIZER_IGBINARY,
-                \Memcached::OPT_BINARY_PROTOCOL => true
-            ),
+$app->register(new MemcachedServiceProvider(), array('memcached.config' => array(
+    'first_pool' => array(
+        'persistent_id' => 'unique_pool_id',
+        'servers' => array(
+            array('192.168.1.101', 11211),
+            array('192.168.1.102', 11211)
         ),
-        'second_pool' => array(
-            'servers' => array(array('localhost', 11211)),
+        'options' => array(
+            \Memcached::OPT_SERIALIZER => \Memcached::SERIALIZER_IGBINARY,
+            \Memcached::OPT_BINARY_PROTOCOL => true
+        ),
+    ),
+    'second_pool' => array(
+        'servers' => array(
+            array('localhost', 11211)
         ),
     )
-));
+)));
 
 ```
 
-The first registered pool is the default and can simply be accessed as you would if there was only one pool. Given the above configuration, these two lines are equivalent :
+Each registered pool can be accessed using 'mc.POOLNAME' key naming nomenclature :
+
+```php
+
+$foo = $app['mc.first_pool']->get('foo');
+$bar = $app['mc.second_pool']->get('bar');
+
+```
+
+The first registered pool is the default and can simply be accessed as you would if there was only one pool. Given the above configuration, these three lines are equivalent :
 
 ```php
 
 $app['memcached']->set('foobar', 1234);
 
-$app['mcs']['first_pool']->set('foobar', 1234);
+$app['mc']->set('foobar', 1234);
 
+$app['mc.first_pool']->set('foobar', 1234);
+
+```
+
+## Development
+
+Run PHP test suites :
+
+```shell
+make test
+```
+
+Generate PHP code coverage report (require XDebug PHP extension) :
+
+```shell
+make cc
+```
+
+Run PHP Coding Standards Fixer :
+
+```shell
+make cs
+```
+
+Delete code coverage report :
+
+```shell
+make clean
 ```

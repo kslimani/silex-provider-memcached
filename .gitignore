@@ -1,3 +1,11 @@
+# Mac OS
+.DS_Store?
+.DS_Store
+ehthumbs.db
+Thumbs.db
+
+# Composer
 composer.phar
 composer.lock
 vendor/
+coverage-html
