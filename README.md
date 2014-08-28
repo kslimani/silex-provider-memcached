@@ -15,7 +15,7 @@ Add in `composer.json` file :
 ```json
 {
     "require": {
-        "kslimani/silex-provider-memcached": "dev-master"
+        "kslimani/silex-provider-memcached": "1.0.*"
     },
     "repositories": [
       {
