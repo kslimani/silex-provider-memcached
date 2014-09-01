@@ -177,6 +177,12 @@ Generate PHP code coverage report (require XDebug PHP extension) :
 make cc
 ```
 
+Run PHP Coding Standards Fixer preview :
+
+```shell
+make csp
+```
+
 Run PHP Coding Standards Fixer :
 
 ```shell
